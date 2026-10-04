@@ -83,8 +83,11 @@ def create_app(database: str | None = None, secret_key: str | None = None) -> Fa
     """`database` is a SQLite file path or a postgresql:// URL. Defaults to
     $DATABASE_URL (set by the Neon integration on Vercel), then $KYBERGATE_DB."""
     app = FastAPI(title="kybergate", docs_url=None, redoc_url=None, openapi_url=None)
+    # On Vercel without a database the app folder is read-only, so fall back to
+    # /tmp (works, but accounts reset when the instance is recycled).
+    default_db = "/tmp/kybergate.db" if os.environ.get("VERCEL") else "instance/kybergate.db"
     store = Store(database or os.environ.get("DATABASE_URL")
-                  or os.environ.get("KYBERGATE_DB", "instance/kybergate.db"))
+                  or os.environ.get("KYBERGATE_DB", default_db))
     app.state.store = store
     app.add_middleware(
         SessionMiddleware,

@@ -2,11 +2,13 @@
 __pycache__/
 .pytest_cache/
 instance/
-kybergate/_native/
+# kybergate/_native/*.so is committed so Vercel (which has no C compiler step) can load it.
+# Rebuild with `make` after changing third_party/; the files only need glibc >= 2.4.
 tools/vendor/node_modules/
 third_party/pq-crystals-kyber/ref/test/test_*[0-9]
 third_party/pq-crystals-kyber/ref/lib/
 *.so
+!kybergate/_native/*.so
 !kybergate/web/static/vendor/*
 .vercel
 .env*
