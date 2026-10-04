@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+instance/
+kybergate/_native/
+tools/vendor/node_modules/
+third_party/pq-crystals-kyber/ref/test/test_*[0-9]
+third_party/pq-crystals-kyber/ref/lib/
+*.so
+!kybergate/web/static/vendor/*
+.vercel
+.env*

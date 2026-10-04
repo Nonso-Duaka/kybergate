@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ "Create account" if mode == "signup" else "Log in" }} · kybergate{% endblock %}
+{% block main %}
+<div class="stack">
+  <header class="page-head">
+    <h1>Quantum-safe sign-in</h1>
+    <p class="lede">Your credentials are sealed in this browser with a post-quantum key exchange
+      before anything leaves your device.</p>
+  </header>
+
+  <section class="panel auth">
+
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="login" aria-selected="false">Log in</button>
+      <button type="button" role="tab" data-tab="signup" aria-selected="false">Create account</button>
+    </div>
+
+    <form id="auth-form" data-mode="{{ mode }}" autocomplete="on">
+      <label>Username
+        <input name="username" required minlength="3" maxlength="32" pattern="[A-Za-z0-9_.\-]+"
+               autocomplete="username" autofocus spellcheck="false">
+      </label>
+      <label>Password
+        <input name="password" type="password" required autocomplete="current-password">
+      </label>
+      <label id="confirm-row" hidden>Confirm password
+        <input name="confirm" type="password" minlength="8" autocomplete="new-password">
+      </label>
+      <button type="submit" class="primary block">Log in</button>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="panel inspector" aria-label="Wire inspector">
+    <h2>Wire inspector</h2>
+    <p class="mini">Each step of the exchange, as it happens in this browser.</p>
+    <ol class="pipeline">
+      <li data-step="kex" data-idle="ask the server for a one-time public key"><b>Handshake</b><span class="detail">ask the server for a one-time public key</span></li>
+      <li data-step="encaps" data-idle="ML-KEM-768 encapsulation in the browser"><b>Encapsulate</b><span class="detail">ML-KEM-768 encapsulation in the browser</span></li>
+      <li data-step="hkdf" data-idle="shared secret → AES-256 key"><b>Derive key</b><span class="detail">shared secret → AES-256 key</span></li>
+      <li data-step="aead" data-idle="AES-256-GCM over your username + password"><b>Encrypt</b><span class="detail">AES-256-GCM over your username + password</span></li>
+      <li data-step="send" data-idle="server decapsulates with the C reference code"><b>Send &amp; verify</b><span class="detail">server decapsulates with the C reference code</span></li>
+    </ol>
+    <p class="mini">Exact request body sent:</p>
+    <pre id="wire-json" class="wire">— nothing sent yet —</pre>
+    <p id="wire-note" class="mini ok" hidden>No readable username or password is in that request.</p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', path='js/auth.js') }}"></script>{% endblock %}

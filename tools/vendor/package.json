@@ -1,0 +1,12 @@
+{
+  "name": "kybergate-vendor",
+  "private": true,
+  "description": "Bundles ML-KEM-768 from @noble/post-quantum for the browser (kybergate/web/static/vendor/mlkem.js).",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "@noble/post-quantum": "0.7.1",
+    "esbuild": "^0.25.0"
+  }
+}

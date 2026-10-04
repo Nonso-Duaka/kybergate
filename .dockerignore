@@ -1,0 +1,7 @@
+.venv
+.git
+instance
+tools/vendor/node_modules
+**/__pycache__
+.pytest_cache
+kybergate/_native

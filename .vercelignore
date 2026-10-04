@@ -1,0 +1,14 @@
+# Uploaded to Vercel: index.py, kybergate/ (incl. the prebuilt _native/*.so), requirements.txt.
+.venv
+.env*
+instance
+tests
+tools
+third_party
+Dockerfile
+.dockerignore
+Makefile
+pytest.ini
+requirements-dev.txt
+**/__pycache__
+.pytest_cache

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Vault · kybergate{% endblock %}
+{% block bar %}
+<div class="who">
+  <span class="signed">signed in as <strong id="who">{{ user }}</strong></span>
+  <button id="logout" class="linkish" type="button">Log out</button>
+</div>
+{% endblock %}
+{% block main %}
+<div class="stack">
+  <section class="panel lab">
+    <h1>Message lab</h1>
+    <p class="lede">Your browser seals the message with ML-KEM-768 + AES-256-GCM. The server opens it
+      with the official C reference code and reports back what it saw.</p>
+    <form id="lab-form">
+      <label>Plaintext
+        <textarea name="message" rows="3" maxlength="4000" required>{{ message }}</textarea>
+      </label>
+      <button type="submit" class="primary">Seal in browser → open on server</button>
+      <p id="lab-error" class="status" data-kind="error" role="alert"></p>
+    </form>
+    <pre id="lab-log" class="log"></pre>
+
+    <div id="lab-result" hidden>
+      <h2>Ciphertext</h2>
+      <p class="mini" id="lab-ct-bytes"></p>
+      <p class="label">hex</p><pre id="lab-hex" class="bytes"></pre>
+      <p class="label">base64</p><pre id="lab-b64" class="bytes"></pre>
+
+      <h2>Decrypted on the server</h2>
+      <pre id="lab-plain" class="plain"></pre>
+
+      <table class="checks">
+        <tr><td>Browser and server derived the same Kyber secret</td><td id="chk-fp"></td></tr>
+        <tr><td>Decrypted text equals the original</td><td id="chk-text"></td></tr>
+        <tr><td>Plaintext absent from the request on the wire</td><td id="chk-wire"></td></tr>
+        <tr><td>One flipped ciphertext bit is rejected</td><td id="chk-tamper"></td></tr>
+      </table>
+      <details>
+        <summary>Protocol details</summary>
+        <dl class="kv">
+          <dt>Secret fingerprint (browser, noble)</dt><dd id="lab-fp-client"></dd>
+          <dt>Secret fingerprint (server, C ref)</dt><dd id="lab-fp-server"></dd>
+          <dt>Kyber ciphertext</dt><dd id="lab-kem"></dd>
+          <dt>GCM nonce</dt><dd id="lab-iv"></dd>
+        </dl>
+      </details>
+    </div>
+  </section>
+
+  <section class="panel history">
+    <h2>Your sign-ins, as they crossed the wire</h2>
+    <p class="mini">Recorded server-side from the encrypted requests. The password is never stored or shown.</p>
+    {% for w in wire %}
+    <article class="wire-entry">
+      <header><span class="badge {{ w.purpose }}">{{ w.purpose }}</span>
+        <time data-ts="{{ w.at }}">{{ w.at | int }}</time></header>
+      <dl class="kv">
+        <dt>Kyber ciphertext</dt><dd>{{ w.kem_ct_len }} B · <code>{{ w.kem_ct_head }}…</code></dd>
+        <dt>GCM nonce</dt><dd><code>{{ w.iv }}</code></dd>
+        <dt>Sealed credentials</dt><dd><code class="any">{{ w.box_b64 }}</code></dd>
+        <dt>Secret fingerprint</dt><dd><code>{{ w.key_fp }}</code></dd>
+      </dl>
+    </article>
+    {% else %}
+    <p class="mini">No sign-ins recorded yet.</p>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', path='js/vault.js') }}"></script>{% endblock %}
